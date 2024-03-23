@@ -16,10 +16,23 @@ client.on('ready', (c) => {
 });
 
 client.on('messageCreate', (message) => {
-    if(!message.author.bot){
-        return
+    if(message.author.bot){
+        return;
     }
+    if(message.content){
+        console.log(message);
+    }
+    reactIfWord(message, process.env.WORD1, process.env.EMOJI1);
+    
+    
 
 });
 
 client.login(process.env.TOKEN);
+
+const reactIfWord = (message, wordToReactOn, reactEmoji) => {
+    if ((message.content.toLowerCase()).includes(wordToReactOn)){
+        const emojiToSend = client.emojis.cache.find(emoji => emoji.name === reactEmoji); 
+        message.react(emojiToSend);
+    }
+}
