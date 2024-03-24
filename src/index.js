@@ -30,6 +30,14 @@ client.on('messageCreate', (message) => {
 
 client.login(process.env.TOKEN);
 
+
+/*
+    React to a message if it includes a trigger word (not case sensitive).
+    
+    message - Discord given message object
+    wordToReactOn - a string that will trigger the reaction Emoji.
+    reactEmoji - a string of the reaction Emoji name. Exclude the colons in the name.
+*/
 const reactIfWord = (message, wordToReactOn, reactEmoji) => {
     if ((message.content.toLowerCase()).includes(wordToReactOn)){
         const emojiToSend = client.emojis.cache.find(emoji => emoji.name === reactEmoji); 
