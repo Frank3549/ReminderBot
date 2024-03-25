@@ -4,14 +4,17 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --fix"
   },
   "keywords": [],
   "author": "Frank Bautista <fbautista@middlebury.edu>",
   "license": "Apache-2.0",
   "dependencies": {
     "discord.js": "^14.14.1",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
     "eslint": "^8.57.0"
   }
 }
