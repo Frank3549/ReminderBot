@@ -1,6 +1,12 @@
 require('dotenv').config();
 const {Client, IntentsBitField}  = require('discord.js');
 
+// Example in storedTriggerWordsExample.json
+const reactionSpecification = require("./storedTriggerWords.json");
+
+const TIMERSECONDS = 0.75;
+
+
 const client = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
@@ -22,8 +28,8 @@ client.on('messageCreate', (message) => {
     if(message.content){
         console.log(message);
     }
-    reactIfWord(message, process.env.WORD1, process.env.EMOJI1, true, process.env.TIMER1);
-    reactIfWord(message, process.env.WORD2, process.env.EMOJI1, true, process.env.TIMER1);
+
+    triggerWords(message, reactionSpecification);
 
     
 });
@@ -32,23 +38,40 @@ client.login(process.env.TOKEN);
 
 
 /*
-    React to a message if it includes a trigger word (not case sensitive).
+    Take in a message and apply applicable reaction "rules".
+
+    Parameters:
+    messageObject - The "message" object given by discord api
+    reactionSpecification - an array of objects that contain the following:
+        wordToReactOn - A string that will trigger the reaction Emoji.
+        reactEmoji - A string of the reaction Emoji name. Exclude the colons in the name.
+        temporaryReact - Boolean if the reaction is temporary.
+*/
+
+function triggerWords(messageObject, reactionSpecifications) {
+    // not efficient. Could use a set, but that would increase complexity of reactionSpecifications.
+    reactionSpecifications.forEach(obj => {
+        reactIfWord(messageObject, obj.wordToReactOn, obj.reactEmoji, obj.temporaryReact);
+    });
+}
+
+/*
+    Purpose: React to a message if it includes a trigger word (not case sensitive).
 
     message - Discord given message object
     wordToReactOn - A string that will trigger the reaction Emoji.
     reactEmoji - A string of the reaction Emoji name. Exclude the colons in the name.
     temporaryReact - Boolean if the reaction is temporary.
-    secondsToRemove - If temporary, how many seconds should it stay up? (decimals are accepted)
 */
 
-const reactIfWord = (message, wordToReactOn, reactEmoji, temporaryReact, secondsToRemove) => {
+const reactIfWord = (message, wordToReactOn, reactEmoji, temporaryReact) => {
     if ((message.content.toLowerCase()).includes(wordToReactOn)){
         const emojiToSend = client.emojis.cache.find(emoji => emoji.name === reactEmoji); 
         
         if(temporaryReact){
             message.react(emojiToSend)
             .then(reaction => {
-                timeToRemoveReaction(reaction, secondsToRemove * 1000); // convert to milliseconds
+                setTimeout(() => (reaction.remove()), TIMERSECONDS * 1000) // convert to milliseconds 
             })
             .catch(error => console.log(`Couldn't remove the reaction Error: ${error}`))
         }
@@ -56,8 +79,4 @@ const reactIfWord = (message, wordToReactOn, reactEmoji, temporaryReact, seconds
             message.react(emojiToSend);
         }
     }
-}
-
-const timeToRemoveReaction = (reaction, secondsToRemove) => {
-    setTimeout(() => (reaction.remove()), secondsToRemove)
 }
