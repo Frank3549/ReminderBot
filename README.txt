@@ -1,5 +1,5 @@
 Note: This bot is currently still stable and functional but is not serving it's intended purpose yet.
-This is still a work in progress and will be deployed in the near feature. 
+This is still a work in progress and will be deployed in the near future. 
 
 Date of README modification: 3/28/24
 
